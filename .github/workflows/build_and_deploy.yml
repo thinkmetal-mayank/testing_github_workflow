@@ -13,13 +13,13 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14.21.3'
+    # - name: Setup Node.js
+    #   uses: actions/setup-node@v2
+    #   with:
+    #     node-version: '14.21.3'
 
-    - name: Update npm packages
-      run: npm install -g npm@latest
+    # - name: Update npm packages
+    #   run: npm install -g npm@latest
 
     - name: Install Dependencies
       run: npm install
@@ -27,12 +27,12 @@ jobs:
     - name: Build
       run: npm run build  
 
-    - name: Debug Information
-      run: |
-        echo "Node.js version: $(node -v)"
-        echo "npm version: $(npm -v)"
-        ls -la
-        npm run build
+    # - name: Debug Information
+    #   run: |
+    #     echo "Node.js version: $(node -v)"
+    #     echo "npm version: $(npm -v)"
+    #     ls -la
+    #     npm run build
 
 
   deploy:
