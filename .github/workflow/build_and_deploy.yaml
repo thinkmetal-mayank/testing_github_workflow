@@ -18,11 +18,22 @@ jobs:
       with:
         node-version: '14'
 
+    - name: Update npm packages
+      run: npm install -g npm@latest
+
     - name: Install Dependencies
       run: npm install
 
     - name: Build
       run: npm run build  
+
+    - name: Debug Information
+      run: |
+        echo "Node.js version: $(node -v)"
+        echo "npm version: $(npm -v)"
+        ls -la
+        npm run build
+
 
   deploy:
     runs-on: ubuntu-latest
