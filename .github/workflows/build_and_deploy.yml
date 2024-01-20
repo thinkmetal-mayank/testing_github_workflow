@@ -44,7 +44,8 @@ jobs:
           if [ -n "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
             echo "Private key secret exists."
             # Now you can proceed with your SSH command or other actions
-            ssh -i <(echo "${{ secrets.SSH_PRIVATE_KEY }}") username@raspberry-pi-address
+            # ssh -i <(echo "${{ secrets.SSH_PRIVATE_KEY }}") username@raspberry-pi-address
+            ssh -i ${{ secrets.SSH_PRIVATE_KEY }} tkml@raspberrypi.local
           else
             echo "Private key secret not found. Please check the repository secrets."
           fi
