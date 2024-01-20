@@ -39,6 +39,6 @@ jobs:
       - name: Push build to deploy branch
         run: |
           git checkout -b deploy
-          git add -f dist/
+          git add dist/
           git commit -m "Add build artifacts"
           git push origin deploy
