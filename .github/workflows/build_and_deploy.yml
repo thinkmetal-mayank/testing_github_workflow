@@ -39,6 +39,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Debug Info
+        run: |
+          echo "Current Directory: $(pwd)"
+          echo "Contents of the Directory: $(ls -la)"
+          echo "SSH Private Key Permissions: $(ls -la ${{ secrets.SSH_PRIVATE_KEY }})"
+      
       - name: Test SSH Connection
         run: ssh -i ${{ secrets.SSH_PRIVATE_KEY }} tkml@raspberrypi.local
       
