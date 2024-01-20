@@ -39,11 +39,13 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+      - name: List contents of the working directory
+        run: ls
+          
       - name: Switch to deploy branch
         run: git checkout -B deploy
 
-      - name: List contents of the working directory
-        run: ls
+      
 
       # - name: Copy build artifacts
       #   run: cp -r dist/* .
