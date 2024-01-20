@@ -1,53 +1,40 @@
-name: Deploy to Raspberry Pi
+name: React App Deployment # name of the workflo
 
 on:
   push:
     branches:
-      - main
+      - main # branch name
 
 jobs:
-  deploy:
+  deploy-react-to-gh-pages:
     runs-on: ubuntu-latest
+    env:
+      EXAMPLE: example # environment variable
 
     steps:
-      - name: Checkout repository
+      # checkout the repository content to github runner
+      - name: Checkout
         uses: actions/checkout@v2
 
-      # - name: Set up Node.js
-      #   uses: actions/setup-node@v2
-      #   with:
-      #     node-version: 14
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build and Store Artifacts
-        run: npm run build
-        # The build artifacts are now in the 'dist/' directory
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+      # setup nodejs environment
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
         with:
-          name: app-build
-          path: dist  # Adjust to match the correct path 
+          node-version: "18.16.1"
 
-      # - name: Copy Artifacts to Raspberry Pi
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: 'raspberrypi.local'
-      #     username: 'tkml'
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     port: 22
-      #     source: 'dist/'  # Adjust to match the correct path
-      #     target: '/'
+      # cache the dependencies to speed up the build
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-      # - name: SSH into Raspberry Pi and deploy
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: 'your_raspberry_pi_ip'
-      #     username: 'your_ssh_username'
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     port: 22
-      #     script: |
-      #       cd /path/to/your/pi/project
-      #       # Additional deployment commands
+      # install dependencies
+      - name: Install dependencies
+        run: npm i
+
+      # build the react app
+      - name: Build
+        run: npm run build
