@@ -1,70 +1,44 @@
-name: React App Deployment # name of the workflo
+name: Build and Deploy
 
 on:
   push:
     branches:
-      - main # branch name
+      - main
 
 jobs:
-  deploy-react-to-gh-pages:
+  build:
     runs-on: ubuntu-latest
-    env:
-      EXAMPLE: example # environment variable
 
     steps:
-      # checkout the repository content to github runner
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      # setup nodejs environment
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: "18.16.1"
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 14
 
-      # cache the dependencies to speed up the build
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      # install dependencies
       - name: Install dependencies
-        run: npm i
+        run: npm install
 
-      # build the react app
       - name: Build
         run: npm run build
 
-      - name: Check if Private Key Secret Exists
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
         run: |
-          if [ -n "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-            echo "Private key secret exists." 
-          else
-            echo "Private key secret not found. Please check the repository secrets."
-          fi
-              
-      
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      # - name: Debug Info
-      #   run: |
-      #     echo "Current Directory: $(pwd)"
-      #     echo "Contents of the Directory: $(ls -la)"
-      #     echo "SSH Private Key Permissions: $(ls -la ${{ secrets.SSH_PRIVATE_KEY }})"
-      
-      # - name: Test SSH Connection
-      #   run: ssh -i ${{ secrets.SSH_PRIVATE_KEY }} tkml@raspberrypi.local
-      
-
-      # - name: Deploy to Raspberry Pi
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.RASPBERRY_PI_HOST }}
-      #     username: ${{ secrets.RASPBERRY_PI_USERNAME }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     source: dist/  # Specify the directory containing build artifacts
-      #     target: /
-      
+      - name: Push build to deploy branch
+        run: |
+          git checkout -b deploy
+          git add -f dist/
+          git commit -m "Add build artifacts"
+          git push origin deploy
