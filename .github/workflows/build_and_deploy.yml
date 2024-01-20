@@ -42,6 +42,9 @@ jobs:
         with:
           name: dist
 
+      - name: List contents in the working directory
+        run: ls -R
+        
       - name: Commit and push build artifacts
         run: |
           ls
