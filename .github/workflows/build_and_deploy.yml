@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy to Raspberry Pi
 
 on:
   push:
@@ -6,53 +6,50 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    # - name: Setup Node.js
-    #   uses: actions/setup-node@v2
-    #   with:
-    #     node-version: '14.21.3'
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: 14
 
-    # - name: Update npm packages
-    #   run: npm install -g npm@latest
+      - name: Install dependencies
+        run: npm install
 
-    - name: Install Dependencies
-      run: npm install
+      - name: Build and Store Artifacts
+        run: |
+          npm run build
+          mkdir -p deploy
+          cp -r build/* deploy/
 
-    - name: Build
-      run: npm run build  
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-build
+          path: deploy
 
-    # 👇 Store the dist folder
-    - uses: actions/upload-artifact@v3
-      with:
-        name: app-build
-        path: dist
+      # - name: Copy Artifacts to Raspberry Pi
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: 'raspberrypi.local'
+      #     username: 'tkml'
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     port: 22
+      #     source: ${{ github.workspace }}/deploy/
+      #     target: '/'
 
-    # - name: Debug Information
-    #   run: |
-    #     echo "Node.js version: $(node -v)"
-    #     echo "npm version: $(npm -v)"
-    #     ls -la
-    #     npm run build
-
-
-  # deploy:
-  #   runs-on: ubuntu-latest
-
-  #   needs: build
-
-  #   steps:
-  #   - name: Deploy to Server
-  #     run: |
-  #       # Set up SSH key for authentication
-  #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key.pem
-  #       chmod 600 ssh_key.pem
-
-  #       # Copy build files to Raspberry Pi
-  #       scp -i ssh_key.pem -r dist/* tkml@raspberrypi:/
-
+      # - name: SSH into Raspberry Pi and deploy
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: 'your_raspberry_pi_ip'
+      #     username: 'your_ssh_username'
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     port: 22
+      #     script: |
+      #       cd /path/to/your/pi/project
+      #       # Additional deployment commands
