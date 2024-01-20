@@ -34,8 +34,8 @@ jobs:
       - name: 2 List contents of the working directory
         run: ls
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      # - name: Checkout repository
+      #   uses: actions/checkout@v2
 
       - name: Set up Git
         run: |
@@ -48,13 +48,14 @@ jobs:
       - name: Switch to deploy branch
         run: git checkout -B deploy
 
-      
+      - name: 4 List contents of the working directory
+        run: ls
 
-      # - name: Copy build artifacts
-      #   run: cp -r dist/* .
+      - name: Copy build artifacts
+        run: cp -r dist/* .
 
-      # - name: Commit and push build artifacts
-      #   run: |
-      #     git add .
-      #     git commit -m "Add build artifacts"
-      #     git push origin deploy
+      - name: Commit and push build artifacts
+        run: |
+          git add .
+          git commit -m "Add build artifacts"
+          git push origin deploy
