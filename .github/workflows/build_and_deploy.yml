@@ -39,14 +39,25 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Debug Info
+      - name: Check if Private Key Secret Exists
         run: |
-          echo "Current Directory: $(pwd)"
-          echo "Contents of the Directory: $(ls -la)"
-          echo "SSH Private Key Permissions: $(ls -la ${{ secrets.SSH_PRIVATE_KEY }})"
+          if [ -n "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "Private key secret exists."
+            # Now you can proceed with your SSH command or other actions
+            # ssh -i <(echo "${{ secrets.SSH_PRIVATE_KEY }}") username@raspberry-pi-address
+          else
+            echo "Private key secret not found. Please check the repository secrets."
+          fi
       
-      - name: Test SSH Connection
-        run: ssh -i ${{ secrets.SSH_PRIVATE_KEY }} tkml@raspberrypi.local
+
+      # - name: Debug Info
+      #   run: |
+      #     echo "Current Directory: $(pwd)"
+      #     echo "Contents of the Directory: $(ls -la)"
+      #     echo "SSH Private Key Permissions: $(ls -la ${{ secrets.SSH_PRIVATE_KEY }})"
+      
+      # - name: Test SSH Connection
+      #   run: ssh -i ${{ secrets.SSH_PRIVATE_KEY }} tkml@raspberrypi.local
       
 
       # - name: Deploy to Raspberry Pi
