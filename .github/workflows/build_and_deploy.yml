@@ -36,9 +36,14 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Push build to deploy branch
+      - name: Switch to deploy branch
+        run: git checkout -B deploy
+
+      - name: Copy build artifacts
+        run: cp -r dist/* .
+
+      - name: Commit and push build artifacts
         run: |
-          git checkout -b deploy
-          git add dist/
+          git add .
           git commit -m "Add build artifacts"
           git push origin deploy
