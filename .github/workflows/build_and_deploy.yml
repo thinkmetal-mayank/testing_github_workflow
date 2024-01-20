@@ -38,6 +38,7 @@ jobs:
 
       - name: Commit and push build artifacts
         run: |
+          ls
           git checkout -b deploy
           ls
           git add dist/
