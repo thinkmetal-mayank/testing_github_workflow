@@ -29,6 +29,6 @@ jobs:
         uses: nicholasgriffintn/github-branch-deployment-action@0.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_GITHUB_TOKEN }}
-          BRANCH: deploy
+          BRANCH: deployy
           FOLDER: dist
           MESSAGE: 'Build: ({sha}) {msg}'
